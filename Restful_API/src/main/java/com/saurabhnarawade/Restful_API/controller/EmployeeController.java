@@ -4,10 +4,9 @@ import com.saurabhnarawade.Restful_API.dto.EmployeeDto;
 import com.saurabhnarawade.Restful_API.dto.ResponseDto;
 import com.saurabhnarawade.Restful_API.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api")
 @RestController
@@ -26,4 +25,28 @@ public class EmployeeController {
 
         return ResponseEntity.ok(new ResponseDto("200", employeeDto1));
     }
+
+    @GetMapping("/employee")
+    public ResponseEntity<ResponseDto<List<EmployeeDto>>> getAllEmployees() {
+
+        List<EmployeeDto> employeeDtoList = employeeService.getAllEmployees();
+        return ResponseEntity.ok(new ResponseDto("200", employeeDtoList));
+    }
+
+    @GetMapping("/employee/{empId}")
+    public ResponseEntity<ResponseDto<EmployeeDto>> getEmployeeByEmpId(@PathVariable String empId) {
+
+        EmployeeDto employeeDto = employeeService.getByEmpId(empId);
+
+        return ResponseEntity.ok(new ResponseDto("200", employeeDto));
+    }
+
+    @DeleteMapping("/employee/{empId}")
+    public ResponseEntity<ResponseDto<String>> deleteEmployeeByEmpId(@PathVariable String empId) {
+
+        employeeService.deleteEmployee(empId);
+
+        return ResponseEntity.status(200).body(new ResponseDto("200", ("Employee with emp id: " + empId + " deleted successfully")));
+    }
+
 }

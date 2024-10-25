@@ -1,6 +1,7 @@
 package com.saurabhnarawade.Restful_API.service.impl;
 
 import com.saurabhnarawade.Restful_API.entity.Employee;
+import com.saurabhnarawade.Restful_API.exception.EmployeeByEmpIdNotFound;
 import com.saurabhnarawade.Restful_API.exception.EmployeeWithPhoneAlreadyExists;
 import com.saurabhnarawade.Restful_API.mapper.EmployeeMapper;
 import com.saurabhnarawade.Restful_API.repository.EmployeeRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,6 +57,28 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDto;
 
 
+    }
+
+    @Override
+    public List<EmployeeDto> getAllEmployees() {
+        return employeeRepository.findAll()
+                .stream()
+                .map(employee -> EmployeeMapper.ConvertEmployeeToDto(employee, new EmployeeDto()))
+                .toList();
+    }
+
+    @Override
+    public EmployeeDto getByEmpId(String empId) {
+        Employee employee = employeeRepository.findByEmpId(empId).orElseThrow(()-> new EmployeeByEmpIdNotFound("Employee with " + empId + " not found!",404));
+
+        return EmployeeMapper.ConvertEmployeeToDto(employee, new EmployeeDto());
+
+    }
+
+    @Override
+    public void deleteEmployee(String empId) {
+        Employee employee = employeeRepository.findByEmpId(empId).orElseThrow(()-> new EmployeeByEmpIdNotFound("Employee with " + empId + " not found!",404));
+        employeeRepository.delete(employee);
     }
 
     private String generateEmpId(String firstName) {
