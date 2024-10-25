@@ -81,6 +81,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.delete(employee);
     }
 
+    @Override
+    public EmployeeDto updateEmployeeByEmpId(EmployeeDto employeeDto, String empId) {
+        Employee employee = employeeRepository.findByEmpId(empId).orElseThrow(()-> new EmployeeByEmpIdNotFound("Employee with " + empId + " not found!",404));
+
+        employeeRepository.updateEmployee(employeeDto.getFirstName(),employeeDto.getLastName(), employeeDto.getEmail(), employeeDto.getPhone(),employeeDto.getDepartment(), employeeDto.getDesignation(), empId);
+
+        employeeDto.setEmpId(empId);
+        return employeeDto;
+    }
+
     private String generateEmpId(String firstName) {
         // Get the first two characters of the first name
         String company = "SNTECH";
